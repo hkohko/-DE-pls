@@ -89,7 +89,7 @@ async def mod(ctx, *, var):
 @bot.command()
 async def weapon(ctx, *, var):
     result = asyncio.create_task(warframe.weapon(var))
-    await ctx.send(await result)
+    await ctx.send(embed = await result)
 
 @bot.command()
 async def frame(ctx, *, var):
