@@ -33,19 +33,6 @@ async def on_message(message):
     await bot.process_commands(message)
 
 @bot.command()
-@commands.is_owner()
-async def reloadmodules(ctx):
-    await bot.reload_extension(f"cogs.{market}")
-    await bot.reload_extension(f"cogs.{timer}")
-    await bot.reload_extension(f"cogs.{warframe}")
-    embed = discord.Embed(
-        colour=discord.Color.dark_gold(),
-        title="Reload Extensions",
-        description="All extensions reloaded."
-    )
-    await ctx.send(embed=embed)
-
-@bot.command()
 async def wfhelp(ctx, *, entry):
     result = asyncio.create_task(help_commands.helpcommand(entry))
     await ctx.send(await result)
@@ -82,9 +69,7 @@ async def buy(ctx, *, entry):
 @bot.command()
 async def mod(ctx, *, var):
     result_mod = asyncio.create_task(warframe.mod(var))
-    result_modthumb = asyncio.create_task(warframe.mod_thumb())
-    await ctx.send(await result_modthumb)
-    await ctx.send(await result_mod)
+    await ctx.send(embed = await result_mod)
 
 @bot.command()
 async def weapon(ctx, *, var):
@@ -94,7 +79,7 @@ async def weapon(ctx, *, var):
 @bot.command()
 async def frame(ctx, *, var):
     result = asyncio.create_task(warframe.frame(var))
-    await ctx.send(await result)
+    await ctx.send(embed = await result)
 
 asyncio.run(warframe.init_db())
 asyncio.run(market.init_db())

@@ -1,5 +1,6 @@
+# import asyncio
 pol_symbol = {
-    "madurai" : "https://i.imgur.com/zRA8ORi.png",
+    "madurai" : "https://i.imgur.com/cnFPEL7.png",
     "vazarin" : "https://i.imgur.com/YB0SltQ.png",
     "naramon" : "https://i.imgur.com/cPIHGLQ.png",
     "zenurik" : "https://i.imgur.com/InII3qf.png",
@@ -11,3 +12,5 @@ pol_symbol = {
 async def polarity(pol):
     pol = str(pol).lower()
     return pol_symbol[f"{pol}"]
+
+# print(asyncio.run(polarity('madurai')))

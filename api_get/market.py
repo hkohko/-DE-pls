@@ -170,7 +170,7 @@ async def buy(entry):
                 if seller['status'] == 'ingame' or seller['status'] == 'online':
                     buyer_dict[seller['ingame_name']] = [str(j['platinum']),  seller['status'], j['order_type']] #collect all buyers
     except ZeroDivisionError:
-        embed.add_field(name="", value="```No price equal or below average```")
+        embed.add_field(name="", value="```No price equal or above average```")
         return embed
         # return 'No price equal or below average'
     sorted_buyerdict = OrderedDict(sorted(buyer_dict.items(), key=lambda t:int(t[1][0]), reverse=True)) #1 = refer to the list, 0 = first value in that list
