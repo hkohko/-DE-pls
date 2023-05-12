@@ -1,9 +1,7 @@
 discord.py
 python-dotenv==0.20.0
-requests==2.27.1
 fuzzywuzzy==0.18.0
 beautifulsoup4==4.12.2
-pylotus==1.0.0
 python-Levenshtein==0.21.0
 lxml==4.9.2
 aiohttp==3.8.4

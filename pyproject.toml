@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "-DE-pls"
+version = "0.0.3"
+description = "Packages for -DE-pls discord bot"
+authors = ["heko <91366057+hkohko@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+discord = "^2.2.3"
+python-dotenv = "0.20.0"
+fuzzywuzzy = "0.18.0"
+beautifulsoup4 = "4.12.2"
+python-Levenshtein = "0.21.0"
+lxml = "4.9.2"
+aiohttp = "3.8.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
