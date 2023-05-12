@@ -1,7 +1,5 @@
-import requests
 import json
 import aiohttp
-import asyncio
 from fuzzywuzzy import process
 from collections import OrderedDict
 import discord
@@ -39,7 +37,6 @@ async def query(entry):
     for i in output_query:
         if i[1] >= 80:
             query_list.append(f'{i[0]}')
-    # result = f'Matching Queries:\n```{escape.join(sorted(query_list))}```'
     if len(query_list) == 0:
         embed.add_field(name=f"{entry}", value="No matching queries")
         return embed
@@ -99,7 +96,6 @@ async def sell(entry):
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or below average```")
         return embed
-        # return 'No price equal or below average'
     
     sorted_sellerdict = OrderedDict(sorted(seller_dict.items(), key=lambda t:int(t[1][0]), reverse=False)) #1 = refer to the list, 0 = first value in that list
     list_seller = list(sorted_sellerdict.items()) #IMPORTAAAAAAANT for enabling indexing
@@ -116,9 +112,6 @@ async def sell(entry):
         embed.add_field(name="Showing Top 5 Results", value=f"```{''.join(display)}```")
         embed.set_footer(text=f"Average Price: {average} (warframe.market)")
         return embed
-    # return (
-    #     f'{str(output[0]).replace("_", " ").title()}\nhttps://warframe.market/items/{output[0]}\n```Showing Top 5 results\nAverage Price: {average}\n\n{"".join(display)}```'
-    # )
 
 async def buy(entry):
     entry = entry.replace(' ', '').lower()
@@ -172,9 +165,8 @@ async def buy(entry):
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or above average```")
         return embed
-        # return 'No price equal or below average'
     sorted_buyerdict = OrderedDict(sorted(buyer_dict.items(), key=lambda t:int(t[1][0]), reverse=True)) #1 = refer to the list, 0 = first value in that list
-    list_buyer = list(sorted_buyerdict.items()) #IMPORTAAAAAAANT for enabling indexing
+    list_buyer = list(sorted_buyerdict.items()) #IMPORTANT for enabling indexing
     for j, i in enumerate(list_buyer):
         display.append(f'{i[0]} ({i[1][1]}): is {i[1][2]}ing for {i[1][0]}\n')
         enum.append(j)
@@ -188,6 +180,3 @@ async def buy(entry):
         embed.add_field(name="Showing Top 5 Results", value=f"```{''.join(display)}```")
         embed.set_footer(text=f"Average Price: {average} (warframe.market)")
         return embed
-    # return (
-    #     f'{str(output[0]).replace("_", " ").title()}\nhttps://warframe.market/items/{output[0]}\n```Showing Top 5 results\nAverage Price: {average}\n\n{"".join(display)}```'
-    # )
