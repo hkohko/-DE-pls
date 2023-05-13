@@ -163,7 +163,7 @@ async def frame(var):
     embed = discord.Embed(
     colour=discord.Colour.dark_purple(),
     title=f"{entry}",
-    url=f"{wf_wep[num]['wikiaUrl']}",
+    url=f"{wf_frames[num]['wikiaUrl']}",
 )
     embed.set_thumbnail(url=f"{wf_frames[num]['wikiaThumbnail']}")
     
