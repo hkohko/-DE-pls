@@ -3,8 +3,8 @@ import asyncio
 import discord
 from fuzzywuzzy import process
 from bs4 import BeautifulSoup
-# import api_get.comp_pol as comp_pol
-import comp_pol
+import api_get.comp_pol as comp_pol
+# import comp_pol
 escape = f'\n'
 
 def del_db():
