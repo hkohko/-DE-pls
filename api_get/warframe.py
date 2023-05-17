@@ -91,8 +91,11 @@ async def mod(var):
         title=f"{entry_mod}",
         url=f"{wf_mod[num]['wikiaUrl']}"
     )
-    
-    embed.set_thumbnail(url=f"{wf_mod[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_mod[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry_mod)}")
+
 
     enum = []
 
