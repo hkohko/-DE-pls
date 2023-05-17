@@ -92,7 +92,7 @@ async def mod(var):
         url=f"{wf_mod[num]['wikiaUrl']}"
     )
     
-    embed.set_thumbnail(url=f"{await wfmod(entry_mod)}")
+    embed.set_thumbnail(url=f"{wf_mod[num]['wikiaThumbnail']}")
 
     enum = []
 
