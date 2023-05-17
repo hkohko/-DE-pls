@@ -3,8 +3,8 @@ import asyncio
 import discord
 from fuzzywuzzy import process
 from bs4 import BeautifulSoup
-import api_get.comp_pol as comp_pol
-# import comp_pol
+# import api_get.comp_pol as comp_pol
+import comp_pol
 escape = f'\n'
 
 def del_db():
@@ -91,8 +91,11 @@ async def mod(var):
         title=f"{entry_mod}",
         url=f"{wf_mod[num]['wikiaUrl']}"
     )
-    
-    embed.set_thumbnail(url=f"{wf_mod[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_mod[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry_mod)}")
+
 
     enum = []
 
