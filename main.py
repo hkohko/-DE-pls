@@ -12,7 +12,8 @@ import help_commands
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
-bot = commands.Bot(command_prefix=',', intents=intents)
+
+bot = commands.Bot(command_prefix=',', intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
@@ -22,7 +23,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send('Field cannot be empty, type `,wfhelp [command]` for usage')
+        await ctx.send('Field cannot be empty, type `,wfhelp list`')
 
 @bot.event
 async def on_message(message):
@@ -30,6 +31,8 @@ async def on_message(message):
         return
     if message.content.startswith(',DE'):
         await message.channel.send('pls')
+    if message.content.startswith(',help'):
+        await message.channel.send('type `,wfhelp list`')
     await bot.process_commands(message)
 
 @bot.command()
