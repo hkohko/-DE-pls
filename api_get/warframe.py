@@ -150,6 +150,8 @@ async def weapon(var):
                 embed.add_field(name="Total Damage", value=f"{total_dmg}")
 
                 display.clear()
+                dmg_dict.clear()
+                dmg.clear()
 
     except KeyError:
         embed.add_field(name="Value not found", value="")
