@@ -186,5 +186,3 @@ async def frame(var):
         embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_frames[num]['armor']}\nShield - {wf_frames[num]['shield']*3}\nHealth - {wf_frames[num]['health']*3}\nEnergy - {int(wf_frames[num]['power']*1.5)}")
 
     return embed
-asyncio.run(init_db())
-asyncio.run(weapon('xoris'))
