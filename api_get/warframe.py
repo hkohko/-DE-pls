@@ -127,7 +127,11 @@ async def weapon(var):
     title=f"{entry}",
     url=f"{wf_wep[num]['wikiaUrl']}",
 )
-    embed.set_thumbnail(url=f"{wf_wep[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_wep[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry)}")
+
     display = []
     dmg = []
     try:
@@ -168,7 +172,10 @@ async def frame(var):
     title=f"{entry}",
     url=f"{wf_frames[num]['wikiaUrl']}",
 )
-    embed.set_thumbnail(url=f"{wf_frames[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_frames[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry)}")
     
     try:
 
@@ -179,3 +186,5 @@ async def frame(var):
         embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_frames[num]['armor']}\nShield - {wf_frames[num]['shield']*3}\nHealth - {wf_frames[num]['health']*3}\nEnergy - {int(wf_frames[num]['power']*1.5)}")
 
     return embed
+asyncio.run(init_db())
+asyncio.run(weapon('xoris'))
