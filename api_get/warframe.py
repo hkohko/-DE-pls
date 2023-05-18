@@ -127,7 +127,11 @@ async def weapon(var):
     title=f"{entry}",
     url=f"{wf_wep[num]['wikiaUrl']}",
 )
-    embed.set_thumbnail(url=f"{wf_wep[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_wep[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry)}")
+
     display = []
     dmg = []
     try:
@@ -168,7 +172,10 @@ async def frame(var):
     title=f"{entry}",
     url=f"{wf_frames[num]['wikiaUrl']}",
 )
-    embed.set_thumbnail(url=f"{wf_frames[num]['wikiaThumbnail']}")
+    try:
+        embed.set_thumbnail(url=f"{wf_frames[num]['wikiaThumbnail']}")
+    except KeyError:
+        embed.set_thumbnail(url=f"{await wfmod(entry)}")
     
     try:
 
