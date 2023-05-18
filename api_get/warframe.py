@@ -136,9 +136,7 @@ async def weapon(var):
     dmg = []
     try:
         if wf_wep[num]['name'] == entry:
-
             for j in wf_wep[num]['attacks']:
-
                 embed.add_field(name=f"{j['name']}", value=f"Crit. Chance\n{j['crit_chance']}%\nCrit. Damage\n{j['crit_mult']}x\nStat. Chance\n{j['status_chance']}%")
 
                 dmg_dict = j['damage']
@@ -152,8 +150,6 @@ async def weapon(var):
                 embed.add_field(name="Total Damage", value=f"{total_dmg}")
 
                 display.clear()
-                dmg_dict.clear()
-                dmg.clear()
 
     except KeyError:
         embed.add_field(name="Value not found", value="")
