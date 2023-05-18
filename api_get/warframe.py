@@ -146,11 +146,10 @@ async def weapon(var):
 
                 total_dmg = int(sum(dmg))
 
-                embed.add_field(name=f"Damage", value=f"{escape.join(display)}")
-                embed.add_field(name="Total Damage", value=f"{total_dmg}")
+                embed.add_field(name=f"Damage: {total_dmg}", value=f"{escape.join(display)}")
+                embed.add_field(name="", value=f"")
 
                 display.clear()
-                dmg_dict.clear()
                 dmg.clear()
 
     except KeyError:
