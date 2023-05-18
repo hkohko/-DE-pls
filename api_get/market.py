@@ -1,9 +1,61 @@
 import json
+import asyncio
 import aiohttp
 from fuzzywuzzy import process
 from collections import OrderedDict
 import discord
 escape = f'\n'
+
+header_def = {'Platform': 'pc'}
+header_xbox = {'Platform': 'xbox'}
+header_ps = {'Platform': 'ps4'}
+header_switch = {'Platform': 'switch'}
+
+class market_sell(discord.ui.View):
+    def __init__(self, entry):
+        super().__init__()
+        self.value = None
+        self.entry = entry
+ 
+    @discord.ui.button(label="PC", style=discord.ButtonStyle.green)
+    async def pc(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(sell(self.entry, header_def))
+        await interaction.response.edit_message(embed = await result)  
+    @discord.ui.button(label="XBOX", style=discord.ButtonStyle.green)
+    async def xbox(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(sell(self.entry, header_xbox))
+        await interaction.response.edit_message(embed = await result)  
+    @discord.ui.button(label="Playstation", style=discord.ButtonStyle.green)
+    async def ps(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(sell(self.entry, header_ps))
+        await interaction.response.edit_message(embed = await result) 
+    @discord.ui.button(label="Switch", style=discord.ButtonStyle.green)
+    async def switch(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(sell(self.entry, header_switch))
+        await interaction.response.edit_message(embed = await result)
+
+class market_buy(discord.ui.View):
+    def __init__(self, entry):
+        super().__init__()
+        self.value = None
+        self.entry = entry
+ 
+    @discord.ui.button(label="PC", style=discord.ButtonStyle.green)
+    async def pc(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(buy(self.entry, header_def))
+        await interaction.response.edit_message(embed = await result)  
+    @discord.ui.button(label="XBOX", style=discord.ButtonStyle.green)
+    async def xbox(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(buy(self.entry, header_xbox))
+        await interaction.response.edit_message(embed = await result)  
+    @discord.ui.button(label="Playstation", style=discord.ButtonStyle.green)
+    async def ps(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(buy(self.entry, header_ps))
+        await interaction.response.edit_message(embed = await result) 
+    @discord.ui.button(label="Switch", style=discord.ButtonStyle.green)
+    async def switch(self, interaction:discord.Interaction, button:discord.ui.Button):
+        result = asyncio.create_task(buy(self.entry, header_switch))
+        await interaction.response.edit_message(embed = await result)
 
 def del_db():
     global r_market
@@ -44,11 +96,16 @@ async def query(entry):
         embed.add_field(name=f"{entry}", value=f"{escape.join(sorted(query_list))}")
         return embed
 
-async def sell(entry):
+async def sell(entry, header):
     entry = entry.replace(' ', '').lower()
     read = json.loads(r_market)
     payload = read['payload']
     _items = payload['items']
+
+    header_chk = header['Platform']
+    header_url = f"{header_chk}."
+    if header_chk == 'pc':
+        header_url = ''
 
     top = 5
 
@@ -62,12 +119,12 @@ async def sell(entry):
 
     embed = discord.Embed(
     colour=discord.Colour.dark_purple(),
-    title=f"Sell Orders: {str(output[0]).replace('_', ' ').title()}",
-    url=f"https://warframe.market/items/{output[0]}"
+    title=f"({header_chk.upper()}) Sell Orders: {str(output[0]).replace('_', ' ').title()}",
+    url=f"https://{header_url}warframe.market/items/{output[0]}"
 )
 
     async def sell_order():
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(headers=header) as session:
             async with session.get(orders) as get_seller:
                 read = await get_seller.text()
                 return read
@@ -113,11 +170,16 @@ async def sell(entry):
         embed.set_footer(text=f"Average Price: {average} (warframe.market)")
         return embed
 
-async def buy(entry):
+async def buy(entry, header):
     entry = entry.replace(' ', '').lower()
     read = json.loads(r_market)
     payload = read['payload']
     _items = payload['items']
+
+    header_chk = header['Platform']
+    header_url = f"{header_chk}."
+    if header_chk == 'pc':
+        header_url = ''
 
     top = 5
 
@@ -132,11 +194,11 @@ async def buy(entry):
 
     embed = discord.Embed(
     colour=discord.Colour.dark_purple(),
-    title=f"Buy Orders: {str(output[0]).replace('_', ' ').title()}",
-    url=f"https://warframe.market/items/{output[0]}"
+    title=f"({header_chk.upper()}) Buy Orders: {str(output[0]).replace('_', ' ').title()}",
+    url=f"https://{header_url}warframe.market/items/{output[0]}"
 )
     async def buy_order():
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(headers=header) as session:
             async with session.get(orders) as get_buyer:
                 read = await get_buyer.text()
                 return read
@@ -173,7 +235,7 @@ async def buy(entry):
         if len(enum) == top:
             break
     if len(list_buyer) == 0:
-        embed.add_field(name="", value="No price equal or below average")
+        embed.add_field(name="", value="No price equal or above average")
         embed.set_footer(text=f"Average Price: {average} (warframe.market)")
         return embed
     else:
