@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 import discord
 import asyncio
 from dotenv import load_dotenv
@@ -57,13 +58,13 @@ async def q(ctx, *, entry):
 
 @bot.command()
 async def sell(ctx, *, entry):
-    result = asyncio.create_task(market.sell(entry))
-    await ctx.send(embed = await result)
+    view = market.market_sell(entry)
+    await ctx.send(view=view)
 
 @bot.command()
 async def buy(ctx, *, entry):
-    result = asyncio.create_task(market.buy(entry))
-    await ctx.send(embed = await result)
+    view = market.market_buy(entry)
+    await ctx.send(view=view)
 
 @bot.command()
 async def mod(ctx, *, var):
