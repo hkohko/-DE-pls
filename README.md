@@ -4,7 +4,7 @@ This bot is currently maintained and updated by myself. So updates/changes can t
 Actually useful warframe.market prices and other queries.
 
 A simple Warframe (PC) Discord Bot
-This bot uses warframe.market API and Warframe's own OpenAPI
+This bot uses warframe.market API and doc.warframestat.us API
 
 I made this bot due to lack of these features on various existing warframe bots:
 
