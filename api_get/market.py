@@ -16,7 +16,11 @@ class market_sell(discord.ui.View):
         super().__init__()
         self.value = None
         self.entry = entry
- 
+
+    async def send(self, ctx):
+        result = asyncio.create_task(sell(self.entry, header_def))
+        self.message = await ctx.send(embed=await result, view=self)
+        
     @discord.ui.button(label="PC", style=discord.ButtonStyle.green)
     async def pc(self, interaction:discord.Interaction, button:discord.ui.Button):
         result = asyncio.create_task(sell(self.entry, header_def))
@@ -39,6 +43,10 @@ class market_buy(discord.ui.View):
         super().__init__()
         self.value = None
         self.entry = entry
+
+    async def send(self, ctx):
+        result = asyncio.create_task(buy(self.entry, header_def))
+        self.message = await ctx.send(embed=await result, view=self)
  
     @discord.ui.button(label="PC", style=discord.ButtonStyle.green)
     async def pc(self, interaction:discord.Interaction, button:discord.ui.Button):
