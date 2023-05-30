@@ -7,6 +7,7 @@ import api_get.market as market
 import api_get.warframe as warframe
 import api_get.timer as world_time
 import help_commands
+import api_get.warframe_items as wf_items
 
 intents = discord.Intents.default()
 intents.members = True
@@ -46,8 +47,9 @@ async def db(ctx):
     await ctx.send('Cleared db')
     await market.init_db()
     await warframe.init_db()
+    
     await ctx.send('Finished updating')
-
+    
 @bot.command()
 async def timer(ctx):
     result = asyncio.create_task(world_time.timer())
@@ -83,7 +85,14 @@ async def frame(ctx, *, var):
     result = asyncio.create_task(warframe.frame(var))
     await ctx.send(embed = await result)
 
+@bot.command()
+async def wiki(ctx, *, entry):
+    result = await asyncio.create_task(wf_items.wiki(entry))
+    await ctx.send(embed=result)
+
 asyncio.run(warframe.init_db())
 asyncio.run(market.init_db())
+asyncio.run(wf_items.get_data())
+asyncio.run(wf_items.write_data())
 load_dotenv()
 bot.run(os.getenv("BOT_TOKEN"))
