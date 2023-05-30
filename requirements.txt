@@ -5,3 +5,4 @@ beautifulsoup4==4.12.2
 python-Levenshtein==0.21.0
 lxml==4.9.2
 aiohttp==3.8.4
+aiofiles==23.1.0
