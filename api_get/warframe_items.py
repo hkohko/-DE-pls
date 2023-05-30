@@ -65,7 +65,7 @@ async def wiki(var):
     try:
         url_api = keys[item_keys[entry]]['wikiaUrl']
         embed = discord.Embed(
-        colour=discord.Colour.orange(),
+        colour=discord.Colour.dark_purple(),
         title=f"{entry}",
         url=url_api
         )
@@ -73,10 +73,11 @@ async def wiki(var):
     
     except KeyError:
         embed = discord.Embed(
-        colour=discord.Colour.orange(),
+        colour=discord.Colour.dark_purple(),
+        title=f"{entry}",
+        url=f"https://warframe.fandom.com/wiki/{entry.replace(' ', '_')}"
         )
-        return embed.add_field(name="wikiaUrl unavailable", value="URL not found")
-
+        return embed
         
 # asyncio.run(get_data())     
 # asyncio.run(write_data())
