@@ -3,6 +3,7 @@ import asyncio
 import aiohttp
 from fuzzywuzzy import process
 from collections import OrderedDict
+import api_get.leven_search as leven
 import discord
 escape = f'\n'
 
@@ -12,6 +13,7 @@ header_ps = {'Platform': 'ps4'}
 header_switch = {'Platform': 'switch'}
 
 class market_sell(discord.ui.View):
+
     def __init__(self, entry):
         super().__init__()
         self.value = None
@@ -37,6 +39,7 @@ class market_sell(discord.ui.View):
     async def switch(self, interaction:discord.Interaction, button:discord.ui.Button):
         result = asyncio.create_task(sell(self.entry, header_switch))
         await interaction.response.edit_message(embed = await result)
+
 
 class market_buy(discord.ui.View):
     def __init__(self, entry):
@@ -65,19 +68,26 @@ class market_buy(discord.ui.View):
         result = asyncio.create_task(buy(self.entry, header_switch))
         await interaction.response.edit_message(embed = await result)
 
-def del_db():
-    global r_market
-    del r_market
 
-async def init_db():
-    global r_market
-    URL_market = r'https://api.warframe.market/v1/items'
-    async with aiohttp.ClientSession() as session:
-        async with session.get(URL_market) as market:
-            r_market = await market.text()
+class DB:
+    async def init_db(self):
+        URL_market = r'https://api.warframe.market/v1/items'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(URL_market) as market:
+                self.r_market = await market.text()
+    async def del_db(self):
+        del self.r_market
+
+db = DB()
+
+async def initialize():
+    await db.init_db()
+
+async def clear_db():
+    await db.del_db()
 
 async def query(entry):
-    read = json.loads(r_market)
+    read = json.loads(db.r_market)
     payload = read['payload']
     _items = payload['items']
 
@@ -104,9 +114,10 @@ async def query(entry):
         embed.add_field(name=f"{entry}", value=f"{escape.join(sorted(query_list))}")
         return embed
 
+
 async def sell(entry, header):
     entry = entry.replace(' ', '').lower()
-    read = json.loads(r_market)
+    read = json.loads(db.r_market)
     payload = read['payload']
     _items = payload['items']
 
@@ -121,16 +132,14 @@ async def sell(entry, header):
 
     for i in _items:
         list_of_items.append(i['url_name'])
-
-    output = process.extractOne(f'{entry}', list_of_items)
-    orders = f'https://api.warframe.market/v1/items/{output[0]}/orders'
+    output = await leven.fsearch(entry, list_of_items)
+    orders = f'https://api.warframe.market/v1/items/{output}/orders'
 
     embed = discord.Embed(
     colour=discord.Colour.dark_purple(),
-    title=f"({header_chk.upper()}) Sell Orders: {str(output[0]).replace('_', ' ').title()}",
-    url=f"https://{header_url}warframe.market/items/{output[0]}"
-)
-
+    title=f"({header_chk.upper()}) Sell Orders: {str(output).replace('_', ' ').title()}",
+    url=f"https://{header_url}warframe.market/items/{output}"
+    )
     async def sell_order():
         async with aiohttp.ClientSession(headers=header) as session:
             async with session.get(orders) as get_seller:
@@ -146,6 +155,7 @@ async def sell(entry, header):
     enum = []
     display = []
     seller_dict = {}
+    
     try:
         for i, j in enumerate(orders_market):
             seller = orders_market[i]['user']
@@ -157,13 +167,13 @@ async def sell(entry, header):
             seller = orders_market[i]['user']
             if j['order_type'] == 'sell' and int(j['platinum']) <= (average):
                 if seller['status'] == 'ingame' or seller['status'] == 'online':
-                    seller_dict[seller['ingame_name']] = [str(j['platinum']),  seller['status'], j['order_type']] #collect all buyers
+                    seller_dict[seller['ingame_name']] = [str(j['platinum']),  seller['status'], j['order_type']]
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or below average```")
         return embed
     
-    sorted_sellerdict = OrderedDict(sorted(seller_dict.items(), key=lambda t:int(t[1][0]), reverse=False)) #1 = refer to the list, 0 = first value in that list
-    list_seller = list(sorted_sellerdict.items()) #IMPORTAAAAAAANT for enabling indexing
+    sorted_sellerdict = OrderedDict(sorted(seller_dict.items(), key=lambda t:int(t[1][0]), reverse=False))
+    list_seller = list(sorted_sellerdict.items())
     for j, i in enumerate(list_seller):
         display.append(f'{i[0]} ({i[1][1]}): is {i[1][2]}ing for {i[1][0]}\n')
         enum.append(j)
@@ -178,9 +188,10 @@ async def sell(entry, header):
         embed.set_footer(text=f"Average Price: {average} (warframe.market)")
         return embed
 
+
 async def buy(entry, header):
     entry = entry.replace(' ', '').lower()
-    read = json.loads(r_market)
+    read = json.loads(db.r_market)
     payload = read['payload']
     _items = payload['items']
 
@@ -196,15 +207,15 @@ async def buy(entry, header):
     for i in _items:
         list_of_items.append(i['url_name'])
 
-    output = process.extractOne(f'{entry}', list_of_items)
-
-    orders = f'https://api.warframe.market/v1/items/{output[0]}/orders'
+    output = await leven.fsearch(entry, list_of_items)
+    orders = f'https://api.warframe.market/v1/items/{output}/orders'
 
     embed = discord.Embed(
     colour=discord.Colour.dark_purple(),
-    title=f"({header_chk.upper()}) Buy Orders: {str(output[0]).replace('_', ' ').title()}",
-    url=f"https://{header_url}warframe.market/items/{output[0]}"
-)
+    title=f"({header_chk.upper()}) Buy Orders: {str(output).replace('_', ' ').title()}",
+    url=f"https://{header_url}warframe.market/items/{output}"
+    )
+
     async def buy_order():
         async with aiohttp.ClientSession(headers=header) as session:
             async with session.get(orders) as get_buyer:
@@ -231,12 +242,13 @@ async def buy(entry, header):
             seller = orders_market[i]['user']
             if j['order_type'] == 'buy' and int(j['platinum']) > (average):
                 if seller['status'] == 'ingame' or seller['status'] == 'online':
-                    buyer_dict[seller['ingame_name']] = [str(j['platinum']),  seller['status'], j['order_type']] #collect all buyers
+                    buyer_dict[seller['ingame_name']] = [str(j['platinum']),  seller['status'], j['order_type']] 
+
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or above average```")
         return embed
-    sorted_buyerdict = OrderedDict(sorted(buyer_dict.items(), key=lambda t:int(t[1][0]), reverse=True)) #1 = refer to the list, 0 = first value in that list
-    list_buyer = list(sorted_buyerdict.items()) #IMPORTANT for enabling indexing
+    sorted_buyerdict = OrderedDict(sorted(buyer_dict.items(), key=lambda t:int(t[1][0]), reverse=True))
+    list_buyer = list(sorted_buyerdict.items())
     for j, i in enumerate(list_buyer):
         display.append(f'{i[0]} ({i[1][1]}): is {i[1][2]}ing for {i[1][0]}\n')
         enum.append(j)

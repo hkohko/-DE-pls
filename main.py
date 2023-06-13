@@ -13,17 +13,17 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=',', intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
     print('bot is running')
-    await bot.change_presence(activity=discord.Game(name=",wfhelp list"))
+    await bot.change_presence(activity=discord.Game(name=",help"))
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send('Field cannot be empty, type `,wfhelp list`')
+        await ctx.send('Field cannot be empty, type `,help`')
 
 @bot.event
 async def on_message(message):
@@ -31,24 +31,23 @@ async def on_message(message):
         return
     if message.content.startswith(',DE'):
         await message.channel.send('pls')
-    if message.content.startswith(',help'):
-        await message.channel.send('type `,wfhelp list`')
     await bot.process_commands(message)
 
+
 @bot.command()
-async def wfhelp(ctx, *, entry):
+@commands.is_owner()
+async def db(ctx):
+    await market.clear_db()
+    await warframe.clear_db()
+    await ctx.send('Cleared db')
+    await asyncio.gather(market.initialize(), warframe.initialize())
+    await ctx.send('Finished updating')
+
+
+@bot.command()
+async def help(ctx, *, entry='list'):
     result = asyncio.create_task(help_commands.helpcommand(entry))
     await ctx.send(await result)
-    
-@bot.command()
-async def db(ctx):
-    market.del_db()
-    warframe.del_db()
-    await ctx.send('Cleared db')
-    await market.init_db()
-    await warframe.init_db()
-    
-    await ctx.send('Finished updating')
     
 @bot.command()
 async def timer(ctx):
@@ -90,9 +89,13 @@ async def wiki(ctx, *, entry):
     result = await asyncio.create_task(wf_items.wiki(entry))
     await ctx.send(embed=result)
 
-asyncio.run(warframe.init_db())
-asyncio.run(market.init_db())
-asyncio.run(wf_items.get_data())
-asyncio.run(wf_items.write_data())
+
+async def execute():
+    await asyncio.gather(warframe.initialize(), market.initialize())
+    await wf_items.get_data()
+    await wf_items.write_data()
+
+
+asyncio.run(execute())
 load_dotenv()
 bot.run(os.getenv("BOT_TOKEN"))
