@@ -16,7 +16,8 @@ I made this bot due to lack of these features on various existing warframe bots:
 
 Changes:  
 `
-v0.0.5 (18/05/2023): market queries now includes all platforms
+v0.0.5 (18/05/2023): market queries now includes all platforms  
+v0.1.0 (13/06/2023): improved search performance for all commands
 `
 
 made by heko#4000 (discord) | twitter.com/@hekontent
