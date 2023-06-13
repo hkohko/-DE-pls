@@ -1,8 +1,10 @@
 # -DE-pls-discord.py
+This bot is currently maintained and updated by myself. So updates/changes can take an hour or a month.
+
 Actually useful warframe.market prices and other queries.
 
 A simple Warframe (PC) Discord Bot
-This bot uses warframe.market API and Warframe's own OpenAPI
+This bot uses warframe.market API and doc.warframestat.us API
 
 I made this bot due to lack of these features on various existing warframe bots:
 
@@ -11,6 +13,11 @@ I made this bot due to lack of these features on various existing warframe bots:
 3. List all market items containing specified string(s), useful for mods like the Vigilante/Galvanized series.
 4. Show basic weapon and warframe stats (armor, shields, damage, CC, CD, etc.)
 5. Show mod drop locations.
+
+Changes:  
+`
+v0.0.5 (18/05/2023): market queries now includes all platforms
+`
 
 made by heko#4000 (discord) | twitter.com/@hekontent
 
