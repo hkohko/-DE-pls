@@ -2,6 +2,7 @@ import aiohttp
 import json
 import aiofiles
 import discord
+import asyncio
 from Levenshtein import ratio
 
 URL = 'https://api.warframestat.us/items/'
@@ -37,12 +38,26 @@ async def write_data():
         fsearch_json = json.dumps(list_items)
         await fsearch.write(fsearch_json)
 
+class SearchItem:
+    async def fsearchitem(self):
+        async with aiofiles.open(f'{folder}/fsearch_item.json', 'r', errors='ignore') as f:
+            self.r = await f.read()
+        async with aiofiles.open(f'{folder}/item_name.json', 'r', errors='ignore') as names:
+            self.item_keys = json.loads(await names.read())
+        async with aiofiles.open(f'{folder}/items.json', 'r') as f:
+            self.keys = json.loads(await f.read())
+
+search = SearchItem()
+
+
+async def initialize():
+    await search.fsearchitem()
+asyncio.run(initialize())
+
 
 async def fsearch(var):
-    async with aiofiles.open(f'{folder}/fsearch_item.json', 'r', errors='ignore') as f:
-        r = await f.read()
 
-    choices = json.loads(r)
+    choices = json.loads(search.r)
     cutoff = 0.55
     candidates = {}
 
@@ -60,26 +75,22 @@ async def fsearch(var):
 async def wiki(var):
 
     entry = await fsearch(str(var).title())
- 
-    async with aiofiles.open(f'{folder}/item_name.json', 'r', errors='ignore') as names:
-        item_keys = json.loads(await names.read())
-        async with aiofiles.open(f'{folder}/items.json', 'r') as f:
-            keys = json.loads(await f.read())
-            try:
-                url_api = keys[item_keys[entry]]['wikiaUrl']
-                embed = discord.Embed(
-                colour=discord.Colour.dark_purple(),
-                title=f"{entry}",
-                url=url_api
-                )
-                
-                return embed
-            
-            except KeyError:
-                embed = discord.Embed(
-                colour=discord.Colour.dark_purple(),
-                title=f"{entry}",
-                url=f"https://warframe.fandom.com/wiki/{entry.replace(' ', '_')}"
-                )
 
-                return embed
+    try:
+        url_api = search.keys[search.item_keys[entry]]['wikiaUrl']
+        embed = discord.Embed(
+        colour=discord.Colour.dark_purple(),
+        title=f"{entry}",
+        url=url_api
+        )
+        
+        return embed
+    
+    except KeyError:
+        embed = discord.Embed(
+        colour=discord.Colour.dark_purple(),
+        title=f"{entry}",
+        url=f"https://warframe.fandom.com/wiki/{entry.replace(' ', '_')}"
+        )
+
+        return embed
