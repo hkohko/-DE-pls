@@ -1,9 +1,10 @@
 import aiohttp
 import asyncio
 import discord
+import json
 from bs4 import BeautifulSoup
 import api_get.leven_search as leven
-
+import api_get.progenitor_wf as progenitor
 escape = '\n'
 
 
@@ -58,6 +59,8 @@ class Lookup:
             name = wf_init.wf_mod[i]["name"]
             self.moddb[name] = i
 
+with open('wiki\progenitor_all.json', 'r') as progenitors:
+    getprogenitor = json.loads(progenitors.read())
 
 wf_init = WF_init()    
 lookup = Lookup()
@@ -194,9 +197,10 @@ async def frame(var):
     except KeyError:
         embed.set_thumbnail(url=f"{await wiki_image(entry)}")
 
-    try:
-        embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
-    except KeyError: 
-        embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
+    # try:
 
+    embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
+    embed.add_field(name="Progenitor: ", value=getprogenitor[entry], inline=False)
+    # except KeyError: 
+    #     embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
     return embed

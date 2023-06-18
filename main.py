@@ -8,12 +8,13 @@ import api_get.warframe as warframe
 import api_get.timer as world_time
 import help_commands
 import api_get.warframe_items as wf_items
+import query.query_frames as query_frames
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=',', intents=intents, help_command=None)
+bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 @bot.event
 async def on_ready():
@@ -95,6 +96,7 @@ async def execute():
     await asyncio.gather(warframe.initialize(), market.initialize())
     await wf_items.get_data()
     await wf_items.write_data()
+    await query_frames.init_query_frames()
 
 
 asyncio.run(execute())
