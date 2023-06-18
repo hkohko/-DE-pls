@@ -2,7 +2,6 @@ import aiohttp
 import json
 import aiofiles
 import discord
-import asyncio
 from Levenshtein import ratio
 
 URL = 'https://api.warframestat.us/items/'
