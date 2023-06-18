@@ -44,7 +44,7 @@ async def write_frames():
     frame_list = lookup.framedb
     for keys, values in frame_list.items():
         notprime_frames[keys] = values
-    with open(r'wiki\frame_names.json', 'w') as notprimes:
+    with open(r'wiki/frame_names.json', 'w') as notprimes:
         notprimes.write(json.dumps(notprime_frames))
 
 async def init_query_frames():

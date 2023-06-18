@@ -228,7 +228,7 @@ class ProgenitorCommand:
         }
         self.element_img = element_img_dict
     async def storeinfo(self):
-        async with aiofiles.open('wiki\progenitor.json') as file:
+        async with aiofiles.open('wiki/progenitor.json') as file:
             self.info = json.loads(await file.read())
 
     async def qpg(self, entry):

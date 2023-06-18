@@ -73,7 +73,7 @@ class QueryProgenitor:
         frame_progenitor_all = {}
         print('fetching progenitor data...')
         try:
-            async with aiofiles.open('wiki\progenitor.json', 'r') as _:
+            async with aiofiles.open('wiki/progenitor.json', 'r') as _:
                 print('File found!')
                 if force_update == True:
                     print('Forcing update progenitor...')
@@ -91,14 +91,14 @@ class QueryProgenitor:
                 print(frame_progenitor)
             print('done fetching progenitor')  
             
-            async with aiofiles.open('wiki\progenitor.json', 'w') as file:
+            async with aiofiles.open('wiki/progenitor.json', 'w') as file:
                 await file.write(json.dumps(frame_progenitor))
-            async with aiofiles.open('wiki\progenitor_all.json', 'w') as file:
+            async with aiofiles.open('wiki/progenitor_all.json', 'w') as file:
                 await file.write(json.dumps(frame_progenitor_all))
 
     async def set_element(self):
         valuelist = []
-        async with aiofiles.open('wiki\progenitor.json', 'r', errors='ignore') as file:
+        async with aiofiles.open('wiki/progenitor.json', 'r', errors='ignore') as file:
             progenitor = json.loads(await file.read())
         for _, values in progenitor.items():
             valuelist.append(values)
@@ -117,7 +117,7 @@ async def save_progenitors(force):
 
 class WarframePy:
     async def warframepy_progenitor(self):
-        async with aiofiles.open('wiki\progenitor_all.json', 'r') as progenitors:
+        async with aiofiles.open('wiki/progenitor_all.json', 'r') as progenitors:
             self.getprogenitor = json.loads(await progenitors.read())
 
 framepy = WarframePy()
