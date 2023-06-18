@@ -61,7 +61,6 @@ class Lookup:
             self.moddb[name] = i
 
 
-
 wf_init = WF_init()    
 lookup = Lookup()
 
@@ -75,7 +74,6 @@ async def clear_db():
 
 
 async def wiki_image(img):
-    
     webpage = f'https://warframe.fandom.com/wiki/{img}'.replace(" ", "_")
     async def get_image():
         async with aiohttp.ClientSession() as session:
@@ -98,7 +96,6 @@ async def wiki_image(img):
 
 
 async def mod(var):
-
     await lookup.mod_db()
 
     display = []
@@ -182,6 +179,12 @@ class Frame_Progen:
     async def initialize(self):
         await query_frames.init_query_frames()
         await progenitor.progenitor_wf_start()
+        self.progenlist = progenitor.framepy.getprogenitor
+
+    async def update(self):
+        self.progenlist.clear()
+        print('Cleared self.progenlist')
+        await progenitor.progenitor_wf_start(True)
         self.progenlist = progenitor.framepy.getprogenitor
 
 fprogen = Frame_Progen() 

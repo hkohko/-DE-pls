@@ -39,9 +39,10 @@ async def on_message(message):
 async def db(ctx):
     await market.clear_db()
     await warframe.clear_db()
-    await ctx.send('Cleared db')
+    await ctx.send('Cleared market&warframe db')
     await asyncio.gather(market.initialize(), warframe.initialize(), wf_items.get_data())
     await wf_items.write_data()
+    await warframe.fprogen.update()
     await ctx.send('Finished updating')
 
 

@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import discord
 import aiohttp
 import asyncio
 import json
@@ -66,7 +67,7 @@ class QueryProgenitor:
         with open(r'wiki/frame_names.json', 'r') as framelist:
             self.frames = framelist.read()
 
-    async def write_progenitors(self):
+    async def write_progenitors(self, force_update=False):
         frames = json.loads(self.frames)
         frame_progenitor = {}
         frame_progenitor_all = {}
@@ -74,10 +75,12 @@ class QueryProgenitor:
         try:
             with open('wiki\progenitor.json', 'r') as _:
                 print('File found!')
+                if force_update == True:
+                    print('Forcing update progenitor...')
                 check = True
         except FileNotFoundError:
             check = False
-        if check:
+        if check and force_update == False:
             pass
         else:
             for keys, _ in frames.items():
@@ -109,8 +112,8 @@ scrape = ProgenitorScrape()
 async def initialize():
     await q_progenitor.read()
 
-async def save_progenitors():
-    await q_progenitor.write_progenitors()
+async def save_progenitors(force):
+    await q_progenitor.write_progenitors(force)
 
 class WarframePy:
     async def warframepy_progenitor(self):
@@ -119,7 +122,7 @@ class WarframePy:
 
 framepy = WarframePy()
 
-async def progenitor_wf_start():
+async def progenitor_wf_start(force=False):
     await initialize()
-    await save_progenitors()
+    await save_progenitors(force)
     await framepy.warframepy_progenitor()
