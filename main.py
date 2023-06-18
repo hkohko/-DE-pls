@@ -8,8 +8,6 @@ import api_get.warframe as warframe
 import api_get.timer as world_time
 import help_commands
 import api_get.warframe_items as wf_items
-import query.query_frames as query_frames
-import api_get.progenitor_wf as progenitor
 
 intents = discord.Intents.default()
 intents.members = True
@@ -97,8 +95,6 @@ async def execute():
     await market.initialize()
     await wf_items.get_data()
     await wf_items.write_data()
-    await query_frames.init_query_frames()
-    await progenitor.progenitor_wf_start()
 
 asyncio.run(execute())
 load_dotenv()

@@ -5,6 +5,7 @@ import json
 from bs4 import BeautifulSoup
 import api_get.leven_search as leven
 import api_get.progenitor_wf as progenitor
+import query.query_frames as query_frames
 escape = '\n'
 
 
@@ -177,9 +178,16 @@ async def weapon(var):
         return  embed
     return embed
 
+class Frame_Progen:
+    async def initialize(self):
+        await query_frames.init_query_frames()
+        await progenitor.progenitor_wf_start()
+        self.progenlist = progenitor.framepy.getprogenitor
+
+fprogen = Frame_Progen() 
+asyncio.run(fprogen.initialize())
 
 async def frame(var):
-
     await lookup.frames_db()
 
     entry = await leven.fsearch(var, wf_init._names)
@@ -196,10 +204,7 @@ async def frame(var):
     except KeyError:
         embed.set_thumbnail(url=f"{await wiki_image(entry)}")
 
-    # try:
 
     embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
-    embed.add_field(name="Progenitor: ", value=await progenitor.QueryProgenitor().getprogenitor[entry], inline=False)
-    # except KeyError: 
-    #     embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
+    embed.add_field(name="Progenitor: ", value=fprogen.progenlist[entry], inline=False)
     return embed

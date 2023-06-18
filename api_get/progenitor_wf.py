@@ -71,17 +71,26 @@ class QueryProgenitor:
         frame_progenitor = {}
         frame_progenitor_all = {}
         print('fetching progenitor data...')
-        
-        for keys, _ in frames.items():
-            progenitor = await scrape.get_elements(keys.strip().replace(" ", "_"))
-            frame_progenitor_all[keys] = progenitor
-            if 'Prime' not in keys:
-                frame_progenitor[keys] = progenitor
-                
-        with open('wiki\progenitor.json', 'w') as file:
-            file.write(json.dumps(frame_progenitor))
-        with open('wiki\progenitor_all.json', 'w') as file:
-            file.write(json.dumps(frame_progenitor_all))
+        try:
+            with open('wiki\progenitor.json', 'r') as _:
+                print('File found!')
+                check = True
+        except FileNotFoundError:
+            check = False
+        if check:
+            pass
+        else:
+            for keys, _ in frames.items():
+                progenitor = await scrape.get_elements(keys.strip().replace(" ", "_"))
+                frame_progenitor_all[keys] = progenitor
+                if 'Prime' not in keys:
+                    frame_progenitor[keys] = progenitor
+            print('done fetching progenitor')  
+            
+            with open('wiki\progenitor.json', 'w') as file:
+                file.write(json.dumps(frame_progenitor))
+            with open('wiki\progenitor_all.json', 'w') as file:
+                file.write(json.dumps(frame_progenitor_all))
 
     async def cleaning(self):
         valuelist = []
@@ -92,9 +101,6 @@ class QueryProgenitor:
         self.set_values = set(valuelist)
         print(self.set_values)
     
-    async def warframepy_progenitor(self):
-        with open('wiki\progenitor_all.json', 'r') as progenitors:
-            self.getprogenitor = json.loads(progenitors.read())
 
 q_progenitor = QueryProgenitor()
 
@@ -106,8 +112,14 @@ async def initialize():
 async def save_progenitors():
     await q_progenitor.write_progenitors()
 
+class WarframePy:
+    async def warframepy_progenitor(self):
+        with open('wiki\progenitor_all.json', 'r') as progenitors:
+            self.getprogenitor = json.loads(progenitors.read())
+
+framepy = WarframePy()
+
 async def progenitor_wf_start():
     await initialize()
     await save_progenitors()
-    await q_progenitor.warframepy_progenitor()
-
+    await framepy.warframepy_progenitor()
