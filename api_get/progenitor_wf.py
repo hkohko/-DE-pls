@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import discord
 import aiohttp
+import aiofiles
 import asyncio
 import json
 
@@ -64,8 +65,8 @@ class ProgenitorScrape:
 class QueryProgenitor:
 
     async def read(self):
-        with open(r'wiki/frame_names.json', 'r') as framelist:
-            self.frames = framelist.read()
+        async with aiofiles.open(r'wiki/frame_names.json', 'r') as framelist:
+            self.frames = await framelist.read()
 
     async def write_progenitors(self, force_update=False):
         frames = json.loads(self.frames)
@@ -73,7 +74,7 @@ class QueryProgenitor:
         frame_progenitor_all = {}
         print('fetching progenitor data...')
         try:
-            with open('wiki\progenitor.json', 'r') as _:
+            async with aiofiles.open('wiki\progenitor.json', 'r') as _:
                 print('File found!')
                 if force_update == True:
                     print('Forcing update progenitor...')
@@ -90,19 +91,18 @@ class QueryProgenitor:
                     frame_progenitor[keys] = progenitor
             print('done fetching progenitor')  
             
-            with open('wiki\progenitor.json', 'w') as file:
-                file.write(json.dumps(frame_progenitor))
-            with open('wiki\progenitor_all.json', 'w') as file:
-                file.write(json.dumps(frame_progenitor_all))
+            async with aiofiles.open('wiki\progenitor.json', 'w') as file:
+                await file.write(json.dumps(frame_progenitor))
+            async with aiofiles.open('wiki\progenitor_all.json', 'w') as file:
+                await file.write(json.dumps(frame_progenitor_all))
 
-    async def cleaning(self):
+    async def set_element(self):
         valuelist = []
-        with open('wiki\progenitor.json', 'r', errors='ignore') as file:
-            progenitor = json.loads(file.read())
+        async with aiofiles.open('wiki\progenitor.json', 'r', errors='ignore') as file:
+            progenitor = await json.loads(await file.read())
         for _, values in progenitor.items():
             valuelist.append(values)
         self.set_values = set(valuelist)
-        print(self.set_values)
     
 
 q_progenitor = QueryProgenitor()
@@ -117,8 +117,8 @@ async def save_progenitors(force):
 
 class WarframePy:
     async def warframepy_progenitor(self):
-        with open('wiki\progenitor_all.json', 'r') as progenitors:
-            self.getprogenitor = json.loads(progenitors.read())
+        async with aiofiles.open('wiki\progenitor_all.json', 'r') as progenitors:
+            self.getprogenitor = json.loads(await progenitors.read())
 
 framepy = WarframePy()
 

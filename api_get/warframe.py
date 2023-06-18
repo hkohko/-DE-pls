@@ -1,4 +1,5 @@
 import aiohttp
+import aiofiles
 import asyncio
 import discord
 import json
@@ -211,3 +212,12 @@ async def frame(var):
     embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
     embed.add_field(name="Progenitor: ", value=fprogen.progenlist[entry], inline=False)
     return embed
+
+class ProgenitorCommand:
+    async def storeinfo(self):
+        async with aiofiles.open('wiki\progenitor_all') as file:
+            self.info = json.loads(file.read())
+
+    async def qpg(self, entry):
+        ...
+progcommand = ProgenitorCommand()
