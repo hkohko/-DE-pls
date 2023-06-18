@@ -2,7 +2,6 @@ import aiohttp
 import json
 import aiofiles
 import discord
-import asyncio
 from Levenshtein import ratio
 
 URL = 'https://api.warframestat.us/items/'
@@ -52,8 +51,6 @@ search = SearchItem()
 
 async def initialize():
     await search.fsearchitem()
-asyncio.run(initialize())
-
 
 async def fsearch(var):
 

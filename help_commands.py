@@ -1,10 +1,10 @@
 async def helpcommand(entry):
     apos = f"'"
     entry = entry.lower()
-    list_help = ['timer', 'sell', 'buy', 'q', 'weapon', 'frame', 'mod', 'wiki']
+    list_help = ['timer', 'sell', 'buy', 'q', 'weapon', 'frame', 'mod', 'wiki', 'progenitor']
 
     if entry == 'list':
-        return (f"{str(list_help).replace('[', '').replace(']', '').replace(apos, '')}\n```For command help, type ,wfhelp [command] (e.g. ,wfhelp timer)```")
+        return (f"{str(list_help).replace('[', '').replace(']', '').replace(apos, '')}\n```For command help, type ,help [command] (e.g. ,help timer)```")
     elif entry == 'timer':
         return (f"```Usage: ,timer\nShows current world timers```")
     elif entry == 'sell':
@@ -21,5 +21,7 @@ async def helpcommand(entry):
         return (f"```Usage: ,frame [frame name]\n(e.g. ,frame Excalibur)\n\nReturns Warframe basic stats and wiki```")
     elif entry == 'wiki':
         return (f"```Usage: ,wiki [item]\n(e.g. ,wiki Excalibur)\n\nReturns a wiki link of said item```")
+    elif entry == 'progenitor':
+        return (f"```Usage: ,progenitor [element]\n(e.g. ,progenitor heat)\n\nReturns progenitor warframes with element [element]```")
     elif entry not in list_help:
         return ('No such command')

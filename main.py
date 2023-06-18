@@ -39,9 +39,10 @@ async def on_message(message):
 async def db(ctx):
     await market.clear_db()
     await warframe.clear_db()
-    await ctx.send('Cleared db')
+    await ctx.send('Cleared market&warframe db')
     await asyncio.gather(market.initialize(), warframe.initialize(), wf_items.get_data())
     await wf_items.write_data()
+    await warframe.fprogen.update()
     await ctx.send('Finished updating')
 
 
@@ -90,12 +91,17 @@ async def wiki(ctx, *, entry):
     result = await asyncio.create_task(wf_items.wiki(entry))
     await ctx.send(embed=result)
 
+@bot.command()
+async def progenitor(ctx, *, entry):
+    result = await asyncio.create_task(warframe.progenitor_cmd.qpg(entry))
+    await ctx.send(embed = result)
 
 async def execute():
-    await asyncio.gather(warframe.initialize(), market.initialize())
+    await warframe.initialize()
+    await market.initialize()
     await wf_items.get_data()
     await wf_items.write_data()
-
+    await wf_items.initialize()
 
 asyncio.run(execute())
 load_dotenv()

@@ -1,8 +1,13 @@
 import aiohttp
+import aiofiles
 import asyncio
 import discord
+import json
 from bs4 import BeautifulSoup
 import api_get.leven_search as leven
+import api_get.progenitor_wf as progenitor
+import query.query_frames as query_frames
+
 
 escape = '\n'
 
@@ -72,7 +77,6 @@ async def clear_db():
 
 
 async def wiki_image(img):
-    
     webpage = f'https://warframe.fandom.com/wiki/{img}'.replace(" ", "_")
     async def get_image():
         async with aiohttp.ClientSession() as session:
@@ -95,7 +99,6 @@ async def wiki_image(img):
 
 
 async def mod(var):
-
     await lookup.mod_db()
 
     display = []
@@ -175,9 +178,22 @@ async def weapon(var):
         return  embed
     return embed
 
+class Frame_Progen:
+    async def initialize(self):
+        await query_frames.init_query_frames()
+        await progenitor.progenitor_wf_start()
+        self.progenlist = progenitor.framepy.getprogenitor
+
+    async def update(self):
+        self.progenlist.clear()
+        print('Cleared self.progenlist')
+        await progenitor.progenitor_wf_start(True)
+        self.progenlist = progenitor.framepy.getprogenitor
+
+fprogen = Frame_Progen() 
+asyncio.run(fprogen.initialize())
 
 async def frame(var):
-
     await lookup.frames_db()
 
     entry = await leven.fsearch(var, wf_init._names)
@@ -194,9 +210,43 @@ async def frame(var):
     except KeyError:
         embed.set_thumbnail(url=f"{await wiki_image(entry)}")
 
-    try:
-        embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
-    except KeyError: 
-        embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
 
+    embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
+    embed.add_field(name="Progenitor: ", value=fprogen.progenlist[entry], inline=False)
     return embed
+
+class ProgenitorCommand:
+    def __init__(self):
+        element_img_dict = {
+            'Toxin': r'https://static.wikia.nocookie.net/warframe/images/f/f1/ToxinModBundleIcon.png/revision/latest?cb=20191103222538'
+            , 'Cold': r'https://static.wikia.nocookie.net/warframe/images/c/c9/ColdModBundleIcon.png/revision/latest?cb=20191103222451'
+            , 'Heat': r'https://static.wikia.nocookie.net/warframe/images/4/4a/HeatModBundleIcon.png/revision/latest?cb=20191103222525'
+            , 'Electricity': r'https://static.wikia.nocookie.net/warframe/images/8/86/ElectricModBundleIcon.png/revision/latest?cb=20191103222514'
+            , 'Magnetic': r'https://static.wikia.nocookie.net/warframe/images/e/ea/EssentialMagneticGlyph.png/revision/latest?cb=20191015193508'
+            , 'Radiation': r'https://static.wikia.nocookie.net/warframe/images/6/6a/EssentialRadiationGlyph.png/revision/latest?cb=20191015193509'
+            , 'Impact': r'https://static.wikia.nocookie.net/warframe/images/c/cc/EssentialImpactGlyph.png/revision/latest?cb=20210326161740'
+        }
+        self.element_img = element_img_dict
+    async def storeinfo(self):
+        async with aiofiles.open('wiki/progenitor.json') as file:
+            self.info = json.loads(await file.read())
+
+    async def qpg(self, entry):
+        entry = entry.strip()
+        elementlist = list(progenitor.q_progenitor.set_values)
+        entry = await leven.fsearch(entry, elementlist)
+        progenitor_list = []
+        for i in self.info.items():
+            if i[1] == entry:
+                progenitor_list.append(i[0])
+        embed = discord.Embed(
+        colour=discord.Colour.dark_purple(),
+        title=f"Progenitors: {entry}",
+        url=r'https://warframe.fandom.com/wiki/Kuva_Lich/Progenitor'
+        )
+        embed.add_field(name='', value=f"{escape.join(progenitor_list)}")
+        embed.set_thumbnail(url=self.element_img[entry])
+        return embed
+
+progenitor_cmd = ProgenitorCommand()
+asyncio.run(progenitor_cmd.storeinfo())
