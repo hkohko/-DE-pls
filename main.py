@@ -91,16 +91,17 @@ async def wiki(ctx, *, entry):
     result = await asyncio.create_task(wf_items.wiki(entry))
     await ctx.send(embed=result)
 
-# @bot.command()
-# async def progenitor(ctx, *, entry):
-#     result = await asyncio.create_task(warframe.qpg(entry))
-#     await ctx.send(embed = result)
+@bot.command()
+async def progenitor(ctx, *, entry):
+    result = await asyncio.create_task(warframe.progenitor_cmd.qpg(entry))
+    await ctx.send(embed = result)
 
 async def execute():
     await warframe.initialize()
     await market.initialize()
     await wf_items.get_data()
     await wf_items.write_data()
+    await wf_items.initialize()
 
 asyncio.run(execute())
 load_dotenv()

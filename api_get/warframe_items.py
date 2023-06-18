@@ -52,8 +52,6 @@ search = SearchItem()
 
 async def initialize():
     await search.fsearchitem()
-asyncio.run(initialize())
-
 
 async def fsearch(var):
 

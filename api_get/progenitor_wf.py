@@ -31,7 +31,6 @@ class ProgenitorScrape:
                     else:
                         span_texts.append(spans.text)
                         break
-
             if len(span_texts) == 2:
                 return span_texts[-1]
             else:
@@ -89,6 +88,7 @@ class QueryProgenitor:
                 frame_progenitor_all[keys] = progenitor
                 if 'Prime' not in keys:
                     frame_progenitor[keys] = progenitor
+                print(frame_progenitor)
             print('done fetching progenitor')  
             
             async with aiofiles.open('wiki\progenitor.json', 'w') as file:
@@ -99,7 +99,7 @@ class QueryProgenitor:
     async def set_element(self):
         valuelist = []
         async with aiofiles.open('wiki\progenitor.json', 'r', errors='ignore') as file:
-            progenitor = await json.loads(await file.read())
+            progenitor = json.loads(await file.read())
         for _, values in progenitor.items():
             valuelist.append(values)
         self.set_values = set(valuelist)
@@ -126,3 +126,4 @@ async def progenitor_wf_start(force=False):
     await initialize()
     await save_progenitors(force)
     await framepy.warframepy_progenitor()
+    await q_progenitor.set_element()

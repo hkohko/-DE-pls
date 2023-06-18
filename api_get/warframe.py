@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 import api_get.leven_search as leven
 import api_get.progenitor_wf as progenitor
 import query.query_frames as query_frames
+
+
 escape = '\n'
 
 
@@ -214,10 +216,37 @@ async def frame(var):
     return embed
 
 class ProgenitorCommand:
+    def __init__(self):
+        element_img_dict = {
+            'Toxin': r'https://static.wikia.nocookie.net/warframe/images/f/f1/ToxinModBundleIcon.png/revision/latest?cb=20191103222538'
+            , 'Cold': r'https://static.wikia.nocookie.net/warframe/images/c/c9/ColdModBundleIcon.png/revision/latest?cb=20191103222451'
+            , 'Heat': r'https://static.wikia.nocookie.net/warframe/images/4/4a/HeatModBundleIcon.png/revision/latest?cb=20191103222525'
+            , 'Electricity': r'https://static.wikia.nocookie.net/warframe/images/8/86/ElectricModBundleIcon.png/revision/latest?cb=20191103222514'
+            , 'Magnetic': r'https://static.wikia.nocookie.net/warframe/images/e/ea/EssentialMagneticGlyph.png/revision/latest?cb=20191015193508'
+            , 'Radiation': r'https://static.wikia.nocookie.net/warframe/images/6/6a/EssentialRadiationGlyph.png/revision/latest?cb=20191015193509'
+            , 'Impact': r'https://static.wikia.nocookie.net/warframe/images/c/cc/EssentialImpactGlyph.png/revision/latest?cb=20210326161740'
+        }
+        self.element_img = element_img_dict
     async def storeinfo(self):
-        async with aiofiles.open('wiki\progenitor_all') as file:
-            self.info = json.loads(file.read())
+        async with aiofiles.open('wiki\progenitor.json') as file:
+            self.info = json.loads(await file.read())
 
     async def qpg(self, entry):
-        ...
-progcommand = ProgenitorCommand()
+        entry = entry.strip()
+        elementlist = list(progenitor.q_progenitor.set_values)
+        entry = await leven.fsearch(entry, elementlist)
+        progenitor_list = []
+        for i in self.info.items():
+            if i[1] == entry:
+                progenitor_list.append(i[0])
+        embed = discord.Embed(
+        colour=discord.Colour.dark_purple(),
+        title=f"Progenitors: {entry}",
+        url=r'https://warframe.fandom.com/wiki/Kuva_Lich/Progenitor'
+        )
+        embed.add_field(name='', value=f"{escape.join(progenitor_list)}")
+        embed.set_thumbnail(url=self.element_img[entry])
+        return embed
+
+progenitor_cmd = ProgenitorCommand()
+asyncio.run(progenitor_cmd.storeinfo())
