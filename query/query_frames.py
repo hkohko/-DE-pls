@@ -48,6 +48,5 @@ async def write_frames():
         notprimes.write(json.dumps(notprime_frames))
 
 async def init_query_frames():
-    with asyncio.Runner() as runner:
-        runner.run(initialize())
-        runner.run(write_frames())
+    await initialize()
+    await write_frames()

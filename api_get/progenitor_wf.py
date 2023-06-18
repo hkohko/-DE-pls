@@ -70,12 +70,14 @@ class QueryProgenitor:
         frames = json.loads(self.frames)
         frame_progenitor = {}
         frame_progenitor_all = {}
+        print('fetching progenitor data...')
+        
         for keys, _ in frames.items():
             progenitor = await scrape.get_elements(keys.strip().replace(" ", "_"))
             frame_progenitor_all[keys] = progenitor
             if 'Prime' not in keys:
                 frame_progenitor[keys] = progenitor
-                print(frame_progenitor)
+                
         with open('wiki\progenitor.json', 'w') as file:
             file.write(json.dumps(frame_progenitor))
         with open('wiki\progenitor_all.json', 'w') as file:
@@ -89,6 +91,10 @@ class QueryProgenitor:
             valuelist.append(values)
         self.set_values = set(valuelist)
         print(self.set_values)
+    
+    async def warframepy_progenitor(self):
+        with open('wiki\progenitor_all.json', 'r') as progenitors:
+            self.getprogenitor = json.loads(progenitors.read())
 
 q_progenitor = QueryProgenitor()
 
@@ -98,15 +104,10 @@ async def initialize():
     await q_progenitor.read()
 
 async def save_progenitors():
-    return await q_progenitor.write_progenitors()
-
-async def getprogenitor(name):
-    return await scrape.get_elements(name)
+    await q_progenitor.write_progenitors()
 
 async def progenitor_wf_start():
-    with asyncio.Runner() as runner:
-        runner.run(initialize())
-        runner.run(save_progenitors())
-# asyncio.run(initialize())
-# asyncio.run(save_progenitors())
-# asyncio.run(q_progenitor.cleaning())
+    await initialize()
+    await save_progenitors()
+    await q_progenitor.warframepy_progenitor()
+
