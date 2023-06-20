@@ -1,5 +1,6 @@
 from Levenshtein import ratio
 
+
 async def fsearch(entry, choices):
     cutoff = 0.55
     candidates = {}

@@ -1,7 +1,7 @@
 import aiohttp
 import json
 
-escape = '\n'
+escape = "\n"
 
 
 async def get_db(URL):
@@ -13,11 +13,12 @@ async def get_db(URL):
 
 class WF_init:
     async def init_db(self):
-        URL_frames = f'https://api.warframestat.us/warframes/'
+        URL_frames = f"https://api.warframestat.us/warframes/"
         self.wf_frames = await get_db(URL_frames)
 
     async def del_db(self):
         del self.wf_frames
+
 
 class Lookup:
     async def frames_db(self):
@@ -26,7 +27,8 @@ class Lookup:
             name = wf_init.wf_frames[i]["name"]
             self.framedb[name] = i
 
-wf_init = WF_init()    
+
+wf_init = WF_init()
 lookup = Lookup()
 
 
@@ -37,14 +39,16 @@ async def initialize():
 async def clear_db():
     await wf_init.del_db()
 
+
 async def write_frames():
     notprime_frames = {}
     await lookup.frames_db()
     frame_list = lookup.framedb
     for keys, values in frame_list.items():
         notprime_frames[keys] = values
-    with open(r'wiki/frame_names.json', 'w') as notprimes:
+    with open(r"wiki/frame_names.json", "w") as notprimes:
         notprimes.write(json.dumps(notprime_frames))
+
 
 async def init_query_frames():
     await initialize()
