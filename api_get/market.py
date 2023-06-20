@@ -5,6 +5,7 @@ from fuzzywuzzy import process
 from collections import OrderedDict
 import api_get.leven_search as leven
 import discord
+
 escape = f'\n'
 
 header_def = {'Platform': 'pc'}
@@ -75,6 +76,7 @@ class DB:
         async with aiohttp.ClientSession() as session:
             async with session.get(URL_market) as market:
                 self.r_market = await market.text()
+                
     async def del_db(self):
         del self.r_market
 

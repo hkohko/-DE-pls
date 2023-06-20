@@ -8,15 +8,7 @@ import api_get.leven_search as leven
 import api_get.progenitor_wf as progenitor
 import query.query_frames as query_frames
 
-
 escape = '\n'
-
-
-async def get_db(URL):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(URL) as response:
-            response_json = await response.json()
-    return response_json
 
 
 class WF_init:
@@ -42,6 +34,7 @@ class WF_init:
     async def del_db(self):
         del self.wf_item, self.wf_mod, self.wf_frames, self.wf_wep, self._names
 
+
 class Lookup:
     async def weapons_db(self):
         self.weapondb = {}
@@ -49,23 +42,71 @@ class Lookup:
             name = wf_init.wf_wep[i]["name"]
             self.weapondb[name] = i
 
-
     async def frames_db(self):
         self.framedb = {}
         for i, _ in enumerate(wf_init.wf_frames):
             name = wf_init.wf_frames[i]["name"]
             self.framedb[name] = i
 
-
     async def mod_db(self):
         self.moddb = {}
         for i, _ in enumerate(wf_init.wf_mod):
             name = wf_init.wf_mod[i]["name"]
             self.moddb[name] = i
+    
+
+class ProgenitorCommand:
+    def __init__(self):
+        element_img_dict = {
+            'Toxin': r'https://static.wikia.nocookie.net/warframe/images/f/f1/ToxinModBundleIcon.png/revision/latest?cb=20191103222538'
+            , 'Cold': r'https://static.wikia.nocookie.net/warframe/images/c/c9/ColdModBundleIcon.png/revision/latest?cb=20191103222451'
+            , 'Heat': r'https://static.wikia.nocookie.net/warframe/images/4/4a/HeatModBundleIcon.png/revision/latest?cb=20191103222525'
+            , 'Electricity': r'https://static.wikia.nocookie.net/warframe/images/8/86/ElectricModBundleIcon.png/revision/latest?cb=20191103222514'
+            , 'Magnetic': r'https://static.wikia.nocookie.net/warframe/images/e/ea/EssentialMagneticGlyph.png/revision/latest?cb=20191015193508'
+            , 'Radiation': r'https://static.wikia.nocookie.net/warframe/images/6/6a/EssentialRadiationGlyph.png/revision/latest?cb=20191015193509'
+            , 'Impact': r'https://static.wikia.nocookie.net/warframe/images/c/cc/EssentialImpactGlyph.png/revision/latest?cb=20210326161740'
+        }
+        self.element_img = element_img_dict
+
+    async def storeinfo(self):
+        async with aiofiles.open('wiki/progenitor.json') as file:
+            self.info = json.loads(await file.read())
+
+    async def qpg(self, entry):
+        entry = entry.strip()
+        elementlist = list(progenitor.q_progenitor.set_values)
+        entry = await leven.fsearch(entry, elementlist)
+        progenitor_list = []
+        for i in self.info.items():
+            if i[1] == entry:
+                progenitor_list.append(i[0])
+        embed = discord.Embed(
+        colour=discord.Colour.dark_purple(),
+        title=f"Progenitors: {entry}",
+        url=r'https://warframe.fandom.com/wiki/Kuva_Lich/Progenitor'
+        )
+        embed.add_field(name='', value=f"{escape.join(progenitor_list)}")
+        embed.set_thumbnail(url=self.element_img[entry])
+        return embed
+    
+
+class Frame_Progen:
+    async def initialize(self):
+        await query_frames.init_query_frames()
+        await progenitor.progenitor_wf_start()
+        self.progenlist = progenitor.framepy.getprogenitor
+
+    async def update(self):
+        self.progenlist.clear()
+        print('Cleared self.progenlist')
+        await progenitor.progenitor_wf_start(True)
+        self.progenlist = progenitor.framepy.getprogenitor
 
 
 wf_init = WF_init()    
 lookup = Lookup()
+fprogen = Frame_Progen()
+progenitor_cmd = ProgenitorCommand()
 
 
 async def initialize():
@@ -74,6 +115,17 @@ async def initialize():
 
 async def clear_db():
     await wf_init.del_db()
+
+
+asyncio.run(fprogen.initialize())
+asyncio.run(progenitor_cmd.storeinfo())
+
+
+async def get_db(URL):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(URL) as response:
+            response_json = await response.json()
+    return response_json
 
 
 async def wiki_image(img):
@@ -178,20 +230,6 @@ async def weapon(var):
         return  embed
     return embed
 
-class Frame_Progen:
-    async def initialize(self):
-        await query_frames.init_query_frames()
-        await progenitor.progenitor_wf_start()
-        self.progenlist = progenitor.framepy.getprogenitor
-
-    async def update(self):
-        self.progenlist.clear()
-        print('Cleared self.progenlist')
-        await progenitor.progenitor_wf_start(True)
-        self.progenlist = progenitor.framepy.getprogenitor
-
-fprogen = Frame_Progen() 
-asyncio.run(fprogen.initialize())
 
 async def frame(var):
     await lookup.frames_db()
@@ -214,39 +252,3 @@ async def frame(var):
     embed.add_field(name=f"Stats at Rank 30:", value=f"Armor - {wf_init.wf_frames[num]['armor']}\nShield - {wf_init.wf_frames[num]['shield']*3}\nHealth - {wf_init.wf_frames[num]['health']*3}\nEnergy - {int(wf_init.wf_frames[num]['power']*1.5)}")
     embed.add_field(name="Progenitor: ", value=fprogen.progenlist[entry], inline=False)
     return embed
-
-class ProgenitorCommand:
-    def __init__(self):
-        element_img_dict = {
-            'Toxin': r'https://static.wikia.nocookie.net/warframe/images/f/f1/ToxinModBundleIcon.png/revision/latest?cb=20191103222538'
-            , 'Cold': r'https://static.wikia.nocookie.net/warframe/images/c/c9/ColdModBundleIcon.png/revision/latest?cb=20191103222451'
-            , 'Heat': r'https://static.wikia.nocookie.net/warframe/images/4/4a/HeatModBundleIcon.png/revision/latest?cb=20191103222525'
-            , 'Electricity': r'https://static.wikia.nocookie.net/warframe/images/8/86/ElectricModBundleIcon.png/revision/latest?cb=20191103222514'
-            , 'Magnetic': r'https://static.wikia.nocookie.net/warframe/images/e/ea/EssentialMagneticGlyph.png/revision/latest?cb=20191015193508'
-            , 'Radiation': r'https://static.wikia.nocookie.net/warframe/images/6/6a/EssentialRadiationGlyph.png/revision/latest?cb=20191015193509'
-            , 'Impact': r'https://static.wikia.nocookie.net/warframe/images/c/cc/EssentialImpactGlyph.png/revision/latest?cb=20210326161740'
-        }
-        self.element_img = element_img_dict
-    async def storeinfo(self):
-        async with aiofiles.open('wiki/progenitor.json') as file:
-            self.info = json.loads(await file.read())
-
-    async def qpg(self, entry):
-        entry = entry.strip()
-        elementlist = list(progenitor.q_progenitor.set_values)
-        entry = await leven.fsearch(entry, elementlist)
-        progenitor_list = []
-        for i in self.info.items():
-            if i[1] == entry:
-                progenitor_list.append(i[0])
-        embed = discord.Embed(
-        colour=discord.Colour.dark_purple(),
-        title=f"Progenitors: {entry}",
-        url=r'https://warframe.fandom.com/wiki/Kuva_Lich/Progenitor'
-        )
-        embed.add_field(name='', value=f"{escape.join(progenitor_list)}")
-        embed.set_thumbnail(url=self.element_img[entry])
-        return embed
-
-progenitor_cmd = ProgenitorCommand()
-asyncio.run(progenitor_cmd.storeinfo())

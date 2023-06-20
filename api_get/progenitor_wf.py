@@ -1,8 +1,6 @@
 from bs4 import BeautifulSoup
-import discord
 import aiohttp
 import aiofiles
-import asyncio
 import json
 
 class ProgenitorScrape:
@@ -61,8 +59,8 @@ class ProgenitorScrape:
         else:
             return await self.get_progenitor() #output
         
-class QueryProgenitor:
 
+class QueryProgenitor:
     async def read(self):
         async with aiofiles.open(r'wiki/frame_names.json', 'r') as framelist:
             self.frames = await framelist.read()
@@ -105,22 +103,24 @@ class QueryProgenitor:
         self.set_values = set(valuelist)
     
 
-q_progenitor = QueryProgenitor()
-
-scrape = ProgenitorScrape()
-
-async def initialize():
-    await q_progenitor.read()
-
-async def save_progenitors(force):
-    await q_progenitor.write_progenitors(force)
-
 class WarframePy:
     async def warframepy_progenitor(self):
         async with aiofiles.open('wiki/progenitor_all.json', 'r') as progenitors:
             self.getprogenitor = json.loads(await progenitors.read())
 
+            
+q_progenitor = QueryProgenitor()
+scrape = ProgenitorScrape()
 framepy = WarframePy()
+
+
+async def initialize():
+    await q_progenitor.read()
+
+
+async def save_progenitors(force):
+    await q_progenitor.write_progenitors(force)
+
 
 async def progenitor_wf_start(force=False):
     await initialize()
