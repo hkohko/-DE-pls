@@ -1,5 +1,5 @@
 # -DE-pls-discord.py
-This bot is currently maintained and updated by myself. So updates/changes can take an hour or a month.
+**This bot is currently maintained and updated by myself. So updates/changes can take an hour or a month.**
 
 Actually useful warframe.market prices and other queries.
 
