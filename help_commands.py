@@ -11,6 +11,7 @@ async def helpcommand(entry):
         "mod",
         "wiki",
         "progenitor",
+        "incarnon"
     ]
 
     if entry == "list":
@@ -33,5 +34,7 @@ async def helpcommand(entry):
         return f"```Usage: ,wiki [item]\n(e.g. ,wiki Excalibur)\n\nReturns a wiki link of said item```"
     elif entry == "progenitor":
         return f"```Usage: ,progenitor [element]\n(e.g. ,progenitor heat)\n\nReturns progenitor warframes with element [element]```"
+    elif entry =="incarnon":
+        return f"```Usage: ,incarnon\n\nReturns incarnon genesis list from\nhttps://warframe.fandom.com/wiki/Incarnon```"
     elif entry not in list_help:
         return "No such command"
