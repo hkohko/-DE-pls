@@ -19,6 +19,7 @@ Changes:
 v0.0.5 (18/05/2023): market queries now includes all platforms
 v0.1.0 (13/06/2023): improved search performance for all commands
      - (18/06/2023): New command: ,progenitor
+     - (21/06/2023): New command: ,incarnon
 ```
 
 made by heko#4000 (discord) | twitter.com/@hekontent
