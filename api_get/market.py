@@ -172,19 +172,19 @@ async def sell(entry, header):
             if j["order_type"] == "sell":
                 avglist.append(int(j["platinum"]))
         average = sum(avglist) / len(avglist)
-
-        for i, j in enumerate(orders_market):
-            seller = orders_market[i]["user"]
-            if j["order_type"] == "sell" and int(j["platinum"]) <= (average):
-                if seller["status"] == "ingame" or seller["status"] == "online":
-                    seller_dict[seller["ingame_name"]] = [
-                        str(j["platinum"]),
-                        seller["status"],
-                        j["order_type"],
-                    ]
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or below average```")
         return embed
+
+    for i, j in enumerate(orders_market):
+        seller = orders_market[i]["user"]
+        if j["order_type"] == "sell" and int(j["platinum"]) <= (average):
+            if seller["status"] == "ingame" or seller["status"] == "online":
+                seller_dict[seller["ingame_name"]] = [
+                    str(j["platinum"]),
+                    seller["status"],
+                    j["order_type"],
+                ]
 
     sorted_sellerdict = OrderedDict(
         sorted(seller_dict.items(), key=lambda t: int(t[1][0]), reverse=False)
@@ -253,20 +253,19 @@ async def buy(entry, header):
             if j["order_type"] == "buy":
                 avglist.append(int(j["platinum"]))
         average = sum(avglist) / len(avglist)
-
-        for i, j in enumerate(orders_market):
-            seller = orders_market[i]["user"]
-            if j["order_type"] == "buy" and int(j["platinum"]) > (average):
-                if seller["status"] == "ingame" or seller["status"] == "online":
-                    buyer_dict[seller["ingame_name"]] = [
-                        str(j["platinum"]),
-                        seller["status"],
-                        j["order_type"],
-                    ]
-
     except ZeroDivisionError:
         embed.add_field(name="", value="```No price equal or above average```")
         return embed
+    for i, j in enumerate(orders_market):
+        seller = orders_market[i]["user"]
+        if j["order_type"] == "buy" and int(j["platinum"]) > (average):
+            if seller["status"] == "ingame" or seller["status"] == "online":
+                buyer_dict[seller["ingame_name"]] = [
+                    str(j["platinum"]),
+                    seller["status"],
+                    j["order_type"],
+                ]
+
     sorted_buyerdict = OrderedDict(
         sorted(buyer_dict.items(), key=lambda t: int(t[1][0]), reverse=True)
     )

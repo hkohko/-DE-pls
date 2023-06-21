@@ -8,6 +8,7 @@ import api_get.warframe as warframe
 import api_get.timer as world_time
 import help_commands
 import api_get.warframe_items as wf_items
+import query.query_incarnon as query_incarnon
 
 intents = discord.Intents.default()
 intents.members = True
@@ -108,6 +109,12 @@ async def wiki(ctx, *, entry):
 @bot.command()
 async def progenitor(ctx, *, entry):
     result = await asyncio.create_task(warframe.progenitor_cmd.qpg(entry))
+    await ctx.send(embed=result)
+
+
+@bot.command()
+async def incarnon(ctx):
+    result = await asyncio.create_task(query_incarnon.incarnon.incarnon_cmd())
     await ctx.send(embed=result)
 
 
