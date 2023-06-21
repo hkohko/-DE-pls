@@ -69,4 +69,5 @@ class IncarnonGenesis:
             self.embed.add_field(name=f"AttributeError", value="bs4 failed to scrape")
             return self.embed
 
+
 incarnon = IncarnonGenesis()
