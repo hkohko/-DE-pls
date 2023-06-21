@@ -116,7 +116,7 @@ async def progenitor(ctx, *, entry):
 async def incarnon(ctx):
     result = await asyncio.create_task(query_incarnon.incarnon.incarnon_cmd())
     await ctx.send(embed=result)
-
+    query_incarnon.incarnon.embed.clear_fields()
 
 async def execute():
     await warframe.initialize()
