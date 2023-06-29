@@ -199,7 +199,7 @@ async def mod(var):
     return embed
 
 
-# returns an embed to the user containing mod info
+# returns an embed to the user containing weapon info
 async def weapon(var):
     await lookup.weapons_db()
     entry = await leven.fsearch(var, wf_init._names)

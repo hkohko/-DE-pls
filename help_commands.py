@@ -11,7 +11,8 @@ async def helpcommand(entry):
         "mod",
         "wiki",
         "progenitor",
-        "incarnon"
+        "incarnon",
+        "timezone"
     ]
 
     if entry == "list":
@@ -36,5 +37,7 @@ async def helpcommand(entry):
         return f"```Usage: ,progenitor [element]\n(e.g. ,progenitor heat)\n\nReturns progenitor warframes with element [element]```"
     elif entry =="incarnon":
         return f"```Usage: ,incarnon\n\nReturns incarnon genesis list from\nhttps://warframe.fandom.com/wiki/Incarnon```"
+    elif entry =="timezone":
+        return f"```Usage (24-Hour format):\n,timezone <zone> <d, m, y> <h>\nOR\n,timezone\n\n1. Konversi timezone ke WIB.\n<h> bisa kosong e.g.(est 23 6 2023)\n\n2. ,timezone\nlist <zone> (format populer, ada timezone lain)```"
     elif entry not in list_help:
         return "No such command"
