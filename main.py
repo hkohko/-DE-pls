@@ -9,12 +9,13 @@ import api_get.timer as world_time
 import help_commands
 import api_get.warframe_items as wf_items
 import query.query_incarnon as query_incarnon
+from extras.timezone import Timezone
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=",", intents=intents, help_command=None)
+bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 
 
 @bot.event
@@ -117,6 +118,18 @@ async def incarnon(ctx):
     result = await asyncio.create_task(query_incarnon.incarnon.incarnon_cmd())
     await ctx.send(embed=result)
     query_incarnon.incarnon.embed.clear_fields()
+
+
+@bot.command()
+async def timezone(
+    ctx, entry=None, day=None, month=None, year=None, hour=0, minute=0, second=0
+):
+    result = await asyncio.create_task(
+        Timezone().whattime(entry, day, month, year, hour, minute, second)
+    )
+    await ctx.send(embed=result)
+    Timezone().embed.clear_fields()
+
 
 async def execute():
     await warframe.initialize()
